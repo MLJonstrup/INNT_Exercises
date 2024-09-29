@@ -1,16 +1,17 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { getApps, initializeApp } from 'firebase/app';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
+import { getFirestore } from 'firebase/firestore';
 
 // Import your components
-import AddEditCar from './components/add_edit_car'; // Ensure the component name matches
-import CarDetails from './components/CarDetails';
-import CarList from './components/CarList';
+import dashboard from './components/home'; 
+import booking from './components/book';
+import history from './components/history';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -23,10 +24,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase if not already initialized
-if (getApps().length < 1) {
+if (!getApps().length) {
   initializeApp(firebaseConfig);
-  console.log("Firebase On!");
 }
+const db = getFirestore();
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -35,30 +36,37 @@ export default function App() {
   const StackNavigation = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Car List" component={CarList} />
-        <Stack.Screen name="Car Details" component={CarDetails} />
-        <Stack.Screen name="Add/Edit Car" component={AddEditCar} />
+        <Stack.Screen name="Home" component={dashboard} />
+        <Stack.Screen name="Booking" component={booking} />
+        <Stack.Screen name="History" component={history} />
       </Stack.Navigator>
     );
   };
-  
 
   return (
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen 
           name="Home" 
-          component={StackNavigation} 
+          component={dashboard} 
           options={{
             tabBarIcon: () => (<Ionicons name="home" size={20} />),
             headerShown: false
           }} 
         />
         <Tab.Screen 
-          name="Add" 
-          component={AddEditCar} 
+          name="Book new time" 
+          component={booking} 
           options={{
             tabBarIcon: () => (<Ionicons name="add" size={20} />),
+            headerShown: false
+          }} 
+        />
+        <Tab.Screen 
+          name="See past bookings" 
+          component={history} 
+          options={{
+            tabBarIcon: () => (<Ionicons name="book" size={20} />),
             headerShown: false
           }} 
         />
